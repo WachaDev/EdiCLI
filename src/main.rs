@@ -18,8 +18,12 @@ fn main() {
     match matches.subcommand() {
         Some(("write", sub_command)) => editor::write(
             sub_command.value_of("file").unwrap(),
-            sub_command.value_of("text").unwrap()
+            sub_command.values_of("text").unwrap().collect::<Vec<&str>>()
         ),
-        _ => print!("There's no value"),
+        Some(("delete", sub_command)) => editor::delete(
+            sub_command.value_of("file").unwrap(),
+            sub_command.value_of("line").unwrap().parse::<usize>().unwrap() // TODO: Handle the Err case on `parse`
+        ),
+        _ => println!("Input not given"),
     }
 }

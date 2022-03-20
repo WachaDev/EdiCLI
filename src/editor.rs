@@ -3,8 +3,11 @@ use std::io::prelude::*;
 use std::io::{self, BufRead};
 use std::path::Path;
 
-pub fn write<P: AsRef<Path>>(filename: P, text: &str) {
+use colored::*;
+
+pub fn write<P: AsRef<Path>>(filename: P, texts: Vec<&str>) {
     let file = OpenOptions::new()
+        .read(true)
         .write(true)
         .append(true)
         .open(&filename);
@@ -12,26 +15,53 @@ pub fn write<P: AsRef<Path>>(filename: P, text: &str) {
     let mut file = match file {
         Ok(f) => f,
         Err(_) => {
-            eprintln!("File not found, creating...");
-            File::create(filename).expect("Unable to open the file")
+            print_warning_msg("File not found, creating...");
+            File::create(filename).expect("Unable to open the) file")
         }
     };
 
-    writeln!(&mut file, "{}", text);
-    println!("The file was written succesfully!")
+    for text in texts {
+        writeln!(&mut file, "{}", text).expect("Something went wrong writing the file");
+    }
+
+    print_success_msg("The file was written succesfully!");
 }
 
-pub fn delete<P: AsRef<Path>>(
-    filename: P,
-    line_: u8,
-) -> io::Result<io::Lines<io::BufReader<File>>> {
-    let file = File::open("foo.txt")?;
-    let lines = io::BufReader::new(file).lines();
+pub fn delete<P: AsRef<Path>>(filename: P, line: usize) {
+    let file = OpenOptions::new().read(true).write(true).open(&filename);
+    let mut file = match file {
+        Ok(f) => f,
+        Err(_) => {
+            eprintln!("The given file doesn't exist");
+            return;
+        }
+    };
 
-    for line in lines {
-        if let Ok(ip) = line {
-            println!("{}", ip);
+    let mut file_copy = file.try_clone().unwrap();
+    let mut content = String::new();
+    let file_len = content.lines().collect::<Vec<&str>>();
+
+    let f_lines = io::BufReader::new(file_copy).lines();
+
+    for (i, f_line) in f_lines.enumerate() {
+        if let Ok(ip) = f_line {
+            if i == line {
+                println!("Line: {}\nWith the content: {}\n", line, ip);
+                print_success_msg("Has been deleted succesfully!");
+                break;
+            }
         }
     }
-    Ok(io::BufReader::new(File::open("foo.txt")?).lines())
+
+    // println!("That line doesn't exist on the file");
+}
+
+fn print_success_msg(msg: &str) {
+    let message = msg.green().bold();
+    println!("{}", message);
+}
+
+fn print_warning_msg(msg: &str) {
+    let message = msg.yellow().bold();
+    println!("{}", message);
 }
