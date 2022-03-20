@@ -1,13 +1,13 @@
 use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
-use std::io::{self, BufRead};
 use std::path::Path;
 
 use colored::*;
 
+// TODO: Handle errors with Clap API
+
 pub fn write<P: AsRef<Path>>(filename: P, texts: Vec<&str>) {
     let file = OpenOptions::new()
-        .read(true)
         .write(true)
         .append(true)
         .open(&filename);
@@ -27,8 +27,12 @@ pub fn write<P: AsRef<Path>>(filename: P, texts: Vec<&str>) {
     print_success_msg("The file was written succesfully!");
 }
 
-pub fn delete<P: AsRef<Path>>(filename: P, line: usize) {
-    let file = OpenOptions::new().read(true).write(true).open(&filename);
+pub fn rewrite<P: AsRef<Path>>(filename: P, line: usize, text: &str) {
+    let file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(&filename);
+
     let mut file = match file {
         Ok(f) => f,
         Err(_) => {
@@ -37,23 +41,36 @@ pub fn delete<P: AsRef<Path>>(filename: P, line: usize) {
         }
     };
 
-    let mut file_copy = file.try_clone().unwrap();
-    let mut content = String::new();
-    let file_len = content.lines().collect::<Vec<&str>>();
+    let mut buffer = String::new();
+    file.read_to_string(&mut buffer).expect("Something went wrong trying to read the file");
+    drop(file);
 
-    let f_lines = io::BufReader::new(file_copy).lines();
+    let f_lines = buffer.lines();
+    let f_len = buffer.lines().collect::<Vec<&str>>().len();
+
+    if line >= f_len {
+        println!("The line #{} doesn't exist on the file", line);
+        return;
+    }
 
     for (i, f_line) in f_lines.enumerate() {
-        if let Ok(ip) = f_line {
-            if i == line {
-                println!("Line: {}\nWith the content: {}\n", line, ip);
-                print_success_msg("Has been deleted succesfully!");
-                break;
-            }
+        if i == line {
+            println!("Line: {}\nWith the content: {}\n", line, f_line);
+            print_success_msg("The line has been deleted succesfully!");
+
+            let new_content = buffer.replace(f_line, text);
+            let mut new_file = File::create(filename).expect("goo");
+            new_file.write(new_content.as_bytes());
+
+            break;
         }
     }
 
-    // println!("That line doesn't exist on the file");
+}
+
+// FIXME: This function deletes every line with the same content of the given line
+pub fn delete<P: AsRef<Path>>(filename: P, line: usize) {
+    rewrite(filename, line, "");
 }
 
 fn print_success_msg(msg: &str) {

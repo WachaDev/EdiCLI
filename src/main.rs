@@ -17,8 +17,13 @@ fn main() {
 
     match matches.subcommand() {
         Some(("write", sub_command)) => editor::write(
-            sub_command.value_of("file").unwrap(),
-            sub_command.values_of("text").unwrap().collect::<Vec<&str>>()
+            sub_command.value_of_os("file").unwrap(),
+            sub_command.values_of("text").unwrap().collect()
+        ),
+        Some(("rewrite", sub_command)) => editor::rewrite(
+            sub_command.value_of_os("file").unwrap(),
+            sub_command.value_of("line").unwrap().parse::<usize>().unwrap(),
+            sub_command.value_of("text").unwrap()
         ),
         Some(("delete", sub_command)) => editor::delete(
             sub_command.value_of("file").unwrap(),
