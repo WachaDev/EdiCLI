@@ -1,9 +1,3 @@
-# A quick editor through CLI
+# EdiCLI
 
-write
-delete
-rewrite
-
-# TODO:
-
-Handle some errors with Clap API
+Wait for it...

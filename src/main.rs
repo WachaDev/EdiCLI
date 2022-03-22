@@ -1,11 +1,12 @@
-use clap::Command;
-
 mod editor;
 mod subcommands;
 
+use clap::Command;
+
+// TODO: Handle errors with the Clap API
 fn main() {
     let matches = Command::new("edicli")
-        .author("Wachamuli, josemrr27@gmail.com")
+        .author("Wachamuli <josemrr27@gmail.com>")
         .version("0.1")
         .about("A quick editor for quick changes")
         .subcommands([
@@ -27,8 +28,8 @@ fn main() {
         ),
         Some(("delete", sub_command)) => editor::delete(
             sub_command.value_of("file").unwrap(),
-            sub_command.value_of("line").unwrap().parse::<usize>().unwrap() // TODO: Handle the Err case on `parse`
+            sub_command.value_of("line").unwrap().parse::<usize>().unwrap()
         ),
-        _ => println!("Input not given"),
+        _ => unreachable!("You are not supposed to see this"),
     }
 }
