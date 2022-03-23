@@ -1,4 +1,4 @@
 pub mod logic;
-mod utils;
+pub mod utils;
 
 pub use logic::*;

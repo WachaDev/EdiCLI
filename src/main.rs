@@ -3,7 +3,6 @@ mod subcommands;
 
 use clap::Command;
 
-// TODO: Handle errors with the Clap API
 fn main() {
     let matches = Command::new("edicli")
         .author("Wachamuli <josemrr27@gmail.com>")
@@ -30,6 +29,6 @@ fn main() {
             sub_command.value_of("file").unwrap(),
             sub_command.value_of("line").unwrap().parse::<usize>().unwrap()
         ),
-        _ => unreachable!("You are not supposed to see this"),
+        _ => editor::utils::print_error("Input not given"),
     }
 }
