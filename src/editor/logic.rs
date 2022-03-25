@@ -1,4 +1,4 @@
-use std::{fs::File, io::Write, path::Path};
+use std::{io::Write, path::Path};
 
 use super::utils;
 
@@ -8,12 +8,15 @@ pub fn write<P: AsRef<Path>>(filename: P, texts: Vec<&str>) {
     let mut file = utils::open_file(filename, true);
 
     for text in texts {
-        writeln!(&mut file, "{}", text).expect("Something went wrong writing the file");
+        if let Err(e) = writeln!(&mut file, "{}", text) {
+            utils::print_error!("Unable to write on the file: {}", e);
+        };
     }
 
-    utils::print_success("The file was written succesfully!");
+    utils::print_success("The file was written successfully!");
 }
 
+// FIXME: Replace every line with the same content of the given line
 pub fn rewrite<P: AsRef<Path>>(filename: P, line: usize, text: &str) {
     let mut file = utils::open_file(&filename, false);
     let content = utils::get_content(&mut file, line);
@@ -25,11 +28,9 @@ pub fn rewrite<P: AsRef<Path>>(filename: P, line: usize, text: &str) {
                 utils::print_warning("The line is empty");
                 break;
             }
+
             let new_content = content.replace(c_line, text);
-            let mut new_file = File::create(&filename).expect("Unable to create the file");
-            new_file
-                .write(new_content.as_bytes())
-                .expect("Unable to write on the file");
+            utils::update_file(filename, new_content);
 
             println!(
                 "Line: {}\n - {}\n + {}\n",
@@ -37,7 +38,7 @@ pub fn rewrite<P: AsRef<Path>>(filename: P, line: usize, text: &str) {
                 c_line.bright_red(),
                 text.bright_green()
             );
-            utils::print_success("The line has been rewritten succesfully!");
+            utils::print_success("The line has been rewritten successfully!");
             break;
         }
     }
@@ -51,13 +52,10 @@ pub fn delete<P: AsRef<Path>>(filename: P, line: usize) {
 
     for (i, c_line) in lines.enumerate() {
         if i == line - 1 {
-            let new_content = content.replace(c_line, "");
-            let mut new_file = File::create(&filename).expect("Unable to open the file");
-            new_file
-                .write(new_content.as_bytes())
-                .expect("Unable to write on the file");
+            let blank_space = content.replace(c_line, "");
+            utils::update_file(filename, blank_space);
 
-            utils::print_success("The line has been deleted succesfully!");
+            utils::print_success("The line has been deleted successfully!");
             break;
         }
     }

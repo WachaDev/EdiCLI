@@ -29,6 +29,6 @@ fn main() {
             sub_command.value_of("file").unwrap(),
             sub_command.value_of("line").unwrap().parse::<usize>().unwrap()
         ),
-        _ => editor::utils::print_error("Input not given"),
+        _ => editor::utils::print_error!("Input not given"),
     }
 }
