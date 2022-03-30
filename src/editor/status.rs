@@ -1,4 +1,3 @@
-
 use colored::*;
 
 macro_rules! print_error {
@@ -9,9 +8,6 @@ macro_rules! print_error {
     }}
 }
 
-pub(crate) use print_error;
-
-
 pub fn print_success(msg: &str) {
     let message = msg.green().bold();
     println!("{}", message);
@@ -21,3 +17,5 @@ pub fn print_warning(msg: &str) {
     let message = "Warn: ".yellow().bold().to_string() + &msg.yellow().to_string();
     println!("{}", message);
 }
+
+pub(crate) use print_error;
