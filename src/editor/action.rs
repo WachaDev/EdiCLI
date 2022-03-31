@@ -1,8 +1,8 @@
 use std::{io::Write, path::Path};
 
-use super::{file::File, status};
-
 use colored::*;
+
+use super::{file::File, status};
 
 pub fn show<P: AsRef<Path>>(file: &mut File<P>) {
     let content = &file.get_content();
@@ -25,6 +25,7 @@ pub fn write<P: AsRef<Path>>(filename: P, texts: Vec<&str>) -> File<P> {
     }
 
     status::print_success("The file was written successfully!");
+
     file
 }
 
@@ -48,13 +49,16 @@ pub fn rewrite<P: AsRef<Path>>(filename: P, line: usize, text: &str) -> File<P> 
                 "Line: {line}\n\
                     - {c_line}\n\
                     + {text}\n",
-                line = line, c_line = c_line.bright_red(), text = text.bright_green()
+                line = line,
+                c_line = c_line.bright_red(),
+                text = text.bright_green()
             );
             status::print_success("The line has been rewritten successfully!");
             return file;
         }
     }
-    unreachable!()
+
+    unreachable!();
 }
 
 // FIXME: Deletes every line with the same content of the given line
@@ -73,5 +77,6 @@ pub fn delete<P: AsRef<Path>>(filename: P, line: usize) -> File<P> {
             return file;
         }
     }
-    unreachable!()
+
+    unreachable!();
 }

@@ -5,9 +5,9 @@ use std::{
     process,
 };
 
-use super::status;
-
 use colored::*;
+
+use super::status;
 
 pub struct File<P: AsRef<Path>> {
     filename: P,
@@ -33,16 +33,19 @@ impl<P: AsRef<Path>> File<P> {
         if let Err(e) = self.file.rewind() {
             status::print_error!("Unable to rewind the file: {e}");
         }
+
         let mut content = String::new();
         if let Err(e) = self.file.read_to_string(&mut content) {
             status::print_error!("Something went wrong reading the file: {e}");
         };
+
         content
     }
 
     pub fn get_lines(&mut self) -> Vec<String> {
         let raw_lines = &self.get_content();
         let lines: Vec<String> = raw_lines.lines().map(|l| l.to_string()).collect();
+
         lines
     }
 
@@ -66,11 +69,9 @@ impl<P: AsRef<Path>> File<P> {
                 if err.kind() != ErrorKind::NotFound {
                     status::print_error!("Something went wrong opening the file: {err}");
                 }
-                status::print_warning("File not found");
-                if !create {
-                    process::exit(1);
-                }
 
+                status::print_warning("File not found");
+                if !create { process::exit(1); }
                 println!("{}", "Creating...".bright_green());
                 File::create(filename)
             });
