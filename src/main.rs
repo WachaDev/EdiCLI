@@ -13,8 +13,8 @@ fn main() {
         .arg(arg!(-s --show "Show the file"))
         .subcommands([
             subcommands::command_write(),
-            subcommands::command_delete(),
             subcommands::command_rewrite(),
+            subcommands::command_delete(),
         ])
         .get_matches();
 
