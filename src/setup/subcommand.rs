@@ -1,5 +1,6 @@
 use clap::{arg, Command};
 
+// TODO: Use CLP API validators
 pub fn command_write<'a>() -> Command<'a> {
     let command = Command::new("write")
         .about("Write on a file")
