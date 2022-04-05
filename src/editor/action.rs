@@ -5,7 +5,7 @@ use colored::*;
 use super::{file::File, status};
 
 pub fn show<P: AsRef<Path>>(file: &mut File<P>) {
-    let content = &file.get_content();
+    let content = &file.content();
     let path = &file.filename().display();
     println!(
         "+------------------------------------------->\n\
@@ -33,18 +33,18 @@ pub fn write<P: AsRef<Path>>(filename: P, texts: Vec<&str>) -> File<P> {
 pub fn rewrite<P: AsRef<Path>>(filename: P, line: usize, text: &str) -> File<P> {
     let mut file = File::new(filename, false);
 
-    if line > file.get_lines().len() {
+    if line > file.lines().len() {
         status::print_error!("The given line doesn't exist on the file");
     }
 
-    for (i, c_line) in file.get_lines().iter().enumerate() {
+    for (i, c_line) in file.lines().iter().enumerate() {
         if i == line - 1 {
             if c_line == "" {
                 status::print_error!("The line is empty");
             }
 
-            let new_content = file.get_content().replace(c_line, text);
-            File::update_file(file.filename(), new_content);
+            let new_content = file.content().replace(c_line, text);
+            File::update(file.filename(), new_content);
             println!(
                 "Line: {line}\n\
                     - {c_line}\n\
@@ -65,14 +65,14 @@ pub fn rewrite<P: AsRef<Path>>(filename: P, line: usize, text: &str) -> File<P> 
 pub fn delete<P: AsRef<Path>>(filename: P, line: usize) -> File<P> {
     let mut file = File::new(filename, false);
 
-    if line > file.get_lines().len() {
+    if line > file.lines().len() {
         status::print_error!("The given line doesn't exist on the file");
     }
 
-    for (i, c_line) in file.get_lines().iter().enumerate() {
+    for (i, c_line) in file.lines().iter().enumerate() {
         if i == line - 1 {
-            let blank_space = file.get_content().replace(c_line, "");
-            File::update_file(file.filename(), blank_space);
+            let blank_space = file.content().replace(c_line, "");
+            File::update(file.filename(), blank_space);
             status::print_success("The line has been deleted successfully!");
             return file;
         }

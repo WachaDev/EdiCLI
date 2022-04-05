@@ -1,6 +1,6 @@
 use std::{
     fs,
-    io::{prelude::*, ErrorKind},
+    io::{self, prelude::*, ErrorKind},
     path::Path,
     process,
 };
@@ -24,12 +24,21 @@ impl<P: AsRef<Path>> File<P> {
     }
 
     pub fn new(filename: P, create: bool) -> Self {
-        let file = File::open(&filename, create);
+        let file = File::open(&filename).unwrap_or_else(|err| {
+            if err.kind() != ErrorKind::NotFound {
+                status::print_error!("Something went wrong opening the file {err}");
+            }
+
+            status::print_warning("File not found");
+            if !create { process::exit(1); }
+            println!("{}", "Creating...".green());
+            File::create(&filename)
+        });
 
         Self { file, filename }
     }
 
-    pub fn get_content(&mut self) -> String {
+    pub fn content(&mut self) -> String {
         if let Err(e) = self.file.rewind() {
             status::print_error!("Unable to rewind the file: {e}");
         }
@@ -42,8 +51,8 @@ impl<P: AsRef<Path>> File<P> {
         content
     }
 
-    pub fn get_lines(&mut self) -> Vec<String> {
-        let raw_lines = &self.get_content();
+    pub fn lines(&mut self) -> Vec<String> {
+        let raw_lines = &self.content();
         let lines: Vec<String> = raw_lines.lines().map(|l| l.to_string()).collect();
 
         lines
@@ -59,27 +68,17 @@ impl<P: AsRef<Path>> File<P> {
             .unwrap_or_else(|e| status::print_error!("Unable to create the file: {e}"))
     }
 
-    pub fn open(filename: P, create: bool) -> fs::File {
+    pub fn open(filename: P) -> Result<fs::File, io::Error> {
         let file = fs::OpenOptions::new()
             .write(true)
             .read(true)
             .append(true)
-            .open(filename.as_ref())
-            .unwrap_or_else(|err| {
-                if err.kind() != ErrorKind::NotFound {
-                    status::print_error!("Something went wrong opening the file: {err}");
-                }
+            .open(filename.as_ref())?;
 
-                status::print_warning("File not found");
-                if !create { process::exit(1); }
-                println!("{}", "Creating...".bright_green());
-                File::create(filename)
-            });
-
-        file
+        Ok(file)
     }
 
-    pub fn update_file(filename: P, content: String) {
+    pub fn update(filename: P, content: String) {
         let mut new_file = File::create(filename.as_ref());
         new_file
             .write(content.as_bytes())
