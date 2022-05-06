@@ -24,7 +24,7 @@ pub fn write<P: AsRef<Path>>(filename: P, texts: Vec<&str>) -> File<P> {
         };
     }
 
-    status::print_success("The file was written successfully!");
+    status::print_success!("The file was written successfully!");
 
     file
 }
@@ -53,7 +53,7 @@ pub fn rewrite<P: AsRef<Path>>(filename: P, line: usize, text: &str) -> File<P> 
                 c_line = c_line.bright_red(),
                 text = text.bright_green()
             );
-            status::print_success("The line has been rewritten successfully!");
+            status::print_success!("The line has been rewritten successfully!");
             return file;
         }
     }
@@ -73,7 +73,7 @@ pub fn delete<P: AsRef<Path>>(filename: P, line: usize) -> File<P> {
         if i == line - 1 {
             let blank_space = file.content().replace(c_line, "");
             File::update(file.filename(), blank_space);
-            status::print_success("The line has been deleted successfully!");
+            status::print_success!("The line has been deleted successfully!");
             return file;
         }
     }

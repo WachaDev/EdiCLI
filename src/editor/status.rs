@@ -1,4 +1,16 @@
-use colored::*;
+macro_rules! print_success {
+    ($($args:tt)+) => {{
+        use colored::*;
+        println!("{}", format_args!($($args)*).to_string().green().bold());
+    }}
+}
+
+macro_rules! print_warning {
+    ($($args:tt)+) => {{
+        use colored::*;
+        println!("{}{}", "Warn: ".yellow().bold(), format_args!($($args)*).to_string().yellow());
+    }}
+}
 
 macro_rules! print_error {
     ($($args:tt)+) => {{
@@ -8,14 +20,6 @@ macro_rules! print_error {
     }}
 }
 
-pub fn print_success(msg: &str) {
-    let message = msg.green().bold();
-    println!("{message}");
-}
-
-pub fn print_warning(msg: &str) {
-    let message = "Warn: ".yellow().bold().to_string() + &msg.yellow().to_string();
-    println!("{message}");
-}
-
 pub(crate) use print_error;
+pub(crate) use print_success;
+pub(crate) use print_warning;

@@ -29,7 +29,7 @@ impl<P: AsRef<Path>> File<P> {
                 status::print_error!("Something went wrong opening the file {err}");
             }
 
-            status::print_warning("File not found");
+            status::print_warning!("File not found");
             if !create { process::exit(1); }
             println!("{}", "Creating...".green());
             File::create(&filename)
