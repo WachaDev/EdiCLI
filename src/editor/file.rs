@@ -10,8 +10,8 @@ use colored::*;
 use super::status;
 
 pub struct File<P: AsRef<Path>> {
-    filename: P,
     file: fs::File,
+    filename: P,
 }
 
 impl<P: AsRef<Path>> File<P> {

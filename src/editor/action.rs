@@ -5,13 +5,15 @@ use colored::*;
 use super::{file::File, status};
 
 pub fn show<P: AsRef<Path>>(file: &mut File<P>) {
-    let content = &file.content();
-    let path = &file.filename().display();
     println!(
-        "+------------------------------------------->\n\
-        | {path}\n\
-        +------------------------------------------->\n\
-        {content}"
+        "\
+        +-------------------------------------------> \n\
+        | {path}                                      \n\
+        +-------------------------------------------> \n\
+        {content}
+        ",
+        content = &file.content(),
+        path = &file.filename().display()
     );
 }
 
@@ -39,7 +41,7 @@ pub fn rewrite<P: AsRef<Path>>(filename: P, line: usize, text: &str) -> File<P> 
 
     for (i, c_line) in file.lines().iter().enumerate() {
         if i == line - 1 {
-            if c_line == "" {
+            if String::is_empty(c_line) {
                 status::print_error!("The line is empty");
             }
 
