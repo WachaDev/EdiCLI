@@ -84,4 +84,10 @@ impl<P: AsRef<Path>> File<P> {
             .write(content.as_bytes())
             .unwrap_or_else(|e| status::print_error!("Unable to write on the file: {e}"));
     }
+
+    pub fn check_existing_line(line: usize, file: &mut File<P>) {
+        if line > file.lines().len() {
+            status::print_error!("The given line doesn't exist on the file");
+        }
+    }
 }

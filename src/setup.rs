@@ -5,23 +5,23 @@ use crate::editor::{action, status};
 pub fn run(cli: ArgMatches) {
     let mut file = match cli.subcommand() {
         Some(("write", sub_command)) => {
-            let file = sub_command.value_of_os("file").unwrap();
-            let text = sub_command.values_of("text").unwrap().collect();
-
-            action::write(file, text)
+            action::write(
+                sub_command.value_of_os("file").unwrap(),
+                sub_command.values_of("text").unwrap().collect()
+            )
         }
         Some(("rewrite", sub_command)) => {
-            let file = sub_command.value_of_os("file").unwrap();
-            let line = sub_command.value_of_t("line").unwrap();
-            let text = sub_command.value_of("text").unwrap();
-
-            action::rewrite(file, line, text)
+            action::rewrite(
+                sub_command.value_of_os("file").unwrap(),
+                sub_command.value_of_t("line").unwrap(),
+                sub_command.value_of("text").unwrap()
+            )
         }
         Some(("delete", sub_command)) => {
-            let file = sub_command.value_of_os("file").unwrap();
-            let line = sub_command.value_of_t("line").unwrap();
-
-            action::delete(file, line)
+            action::delete(
+                sub_command.value_of_os("file").unwrap(),
+                sub_command.value_of_t("line").unwrap()
+            )
         }
         _ => status::print_error!("Input not given"),
     };
