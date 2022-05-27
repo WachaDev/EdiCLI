@@ -6,7 +6,7 @@ use clap::{Command, arg};
 fn main() {
     let cli = Command::new("edicli")
         .author("Wachamuli <josemrr27@gmail.com>")
-        .version("0.1")
+        .version("0.1.1")
         .about("A quick editor for quick changes")
         .arg(arg!(-s --show "Show the file"))
         .subcommands([

@@ -5,15 +5,38 @@ use colored::*;
 use super::{file::File, status};
 
 pub fn show<P: AsRef<Path>>(file: &mut File<P>) {
+    let corner_sign = '+';
+    let border_topbottom = '-';
+    let border_leftright = '|';
+
+    let content = &file.content();
+    let filename = &file.filename().to_str().unwrap();
+
+    let initial_width = 50;
+    let final_width = initial_width - (filename.len() + 1);
+    let left_padding = " ".to_string();
+
+    let mut first_render = corner_sign.to_string();
+    let mut second_render = border_leftright.to_string() + &left_padding + filename;
+
+    for _ in 0..initial_width {
+        first_render.push(border_topbottom);
+    }
+
+    for _ in 0..final_width {
+        second_render.push(' ');
+    }
+
+    first_render.push(corner_sign);
+    second_render.push(border_leftright);
+
     println!(
-        "\
-        +-------------------------------------------> \n\
-        | {path}                                      \n\
-        +-------------------------------------------> \n\
+        "               \n\
+        {first_render}  \n\
+        {second_render} \n\
+        {first_render}  \n\
         {content}
-        ",
-        content = &file.content(),
-        path = &file.filename().display()
+        "
     );
 }
 
@@ -78,4 +101,3 @@ pub fn delete<P: AsRef<Path>>(filename: P, line: usize) -> File<P> {
 
     unreachable!();
 }
-
