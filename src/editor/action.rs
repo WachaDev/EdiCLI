@@ -6,35 +6,35 @@ use super::{file::File, status};
 
 pub fn show<P: AsRef<Path>>(file: &mut File<P>) {
     let corner_sign = '+';
-    let border_topbottom = '-';
-    let border_leftright = '|';
+    let topbottom_sign = '-';
+    let side_sign = '|';
 
     let content = &file.content();
     let filename = &file.filename().to_str().unwrap();
 
-    let initial_width = 50;
-    let final_width = initial_width - (filename.len() + 1);
     let left_padding = " ".to_string();
+    let width = 50;
+    let adjusted_width = width - (filename.len() + left_padding.len());
 
-    let mut first_render = corner_sign.to_string();
-    let mut second_render = border_leftright.to_string() + &left_padding + filename;
+    let mut topbottom_border = corner_sign.to_string();
+    let mut side_border = side_sign.to_string() + &left_padding + filename;
 
-    for _ in 0..initial_width {
-        first_render.push(border_topbottom);
+    for _ in 0..width {
+        topbottom_border.push(topbottom_sign);
     }
 
-    for _ in 0..final_width {
-        second_render.push(' ');
+    for _ in 0..adjusted_width {
+        side_border.push(' ');
     }
 
-    first_render.push(corner_sign);
-    second_render.push(border_leftright);
+    topbottom_border.push(corner_sign);
+    side_border.push(side_sign);
 
     println!(
-        "               \n\
-        {first_render}  \n\
-        {second_render} \n\
-        {first_render}  \n\
+        "                   \n\
+        {topbottom_border}  \n\
+        {side_border}       \n\
+        {topbottom_border}  \n\
         {content}
         "
     );
@@ -44,7 +44,7 @@ pub fn write<P: AsRef<Path>>(filename: P, texts: Vec<&str>) -> File<P> {
     let mut file = File::new(filename, true);
 
     for text in texts {
-        if let Err(e) = writeln!(&mut file.file(), "{}", text) {
+        if let Err(e) = writeln!(&mut file.file(), "{text}") {
             status::print_error!("Unable to write on the file: {e}");
         };
     }

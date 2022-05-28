@@ -79,8 +79,7 @@ impl<P: AsRef<Path>> File<P> {
     }
 
     pub fn update(filename: P, content: String) {
-        let mut new_file = File::create(filename.as_ref());
-        new_file
+        File::create(filename.as_ref())
             .write(content.as_bytes())
             .unwrap_or_else(|e| status::print_error!("Unable to write on the file: {e}"));
     }
