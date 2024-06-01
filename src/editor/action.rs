@@ -1,3 +1,4 @@
+
 use std::{io::Write, path::Path};
 
 use colored::*;
@@ -9,7 +10,16 @@ pub fn show<P: AsRef<Path>>(file: &mut File<P>) {
     let topbottom_sign = '-';
     let side_sign = '|';
 
-    let content = &file.content();
+    let content = &file
+        .lines()
+        .iter()
+        .enumerate()
+        .map(|(i, line)| {
+            let line_number = i + 1;
+            format!("{line_number}   | ") + line
+        })
+        .collect::<Vec<String>>()
+        .join("\n");
     let filename = &file.filename().to_str().unwrap();
 
     let left_padding = " ".to_string();
@@ -90,5 +100,4 @@ pub fn delete<P: AsRef<Path>>(filename: P, line: usize) -> File<P> {
 
     status::print_success!("The line has been deleted successfully!");
     return file;
-
 }

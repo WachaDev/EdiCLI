@@ -24,3 +24,26 @@ Try a command to check if EdiCLI is working properly, for example:
 ```
 edicli --help
 ```
+![alt text](image-1.png)
+
+## Showcase
+
+Edicli is based on three simple commands: `write`, `rewrite` and `delete`.
+And one aditional flag `--show` or `-s` in short. Every command needs an input file but the 
+arguments may vary.
+
+![alt text](./extra/image.png)
+```
+edicli write <file> <text>
+```
+
+![alt text](./extra/image-2.png)
+![alt text](./extra/image-3.png)
+```
+edicli delete <file> <line>
+```
+
+![alt text](./extra/image-4.png)
+```
+edicli rewrite <file> <line> <text>
+```
