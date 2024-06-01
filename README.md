@@ -24,7 +24,11 @@ Try a command to check if EdiCLI is working properly, for example:
 ```
 edicli --help
 ```
+<<<<<<< HEAD
 ![alt text](image-1.png)
+=======
+![alt text](./extra/image-1.png)
+>>>>>>> 14d254f (Line numbers added to the show flag)
 
 ## Showcase
 
